@@ -1,0 +1,14 @@
+package cn.ms.service;
+
+import cn.ms.params.Content;
+import cn.ms.params.Goods;
+import cn.ms.util.mvc.Page;
+
+public interface GoodsService {
+
+	/**
+	 * 获取货物分页
+	 * @return
+	 */
+	Page<Goods> getGoodsPage(String queryContent, int pageSize, int pageNumber);
+}

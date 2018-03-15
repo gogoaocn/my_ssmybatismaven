@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<!--css样式-->
+		<link href="css/bootstrap.min.css" rel="stylesheet">
+		<link href="css/bootstrap-table.min.css" rel="stylesheet">
+		<!-- js引用-->
+		<script src="js/jquery.min.js"></script>
+		<script src="js/bootstrap.min.js"></script>
+		<script src="js/bootstrap-table-zh-CN.min.js"></script>
+		<script src="js/bootstrap-table.min.js"></script>
+		<title>测试bootsrap的表格显示</title>
+	</head>
+	<body onload="initTable()">
+		<br/>
+		<form class="form-horizontal" role="form">
+			<div class="form-group">
+				<label for="firstname" class="control-label">名 字:</label>
+				<div>
+					<input type="text" style="width: 60%;" class="form-control" id="firstname"
+						value="qqq" placeholder="请输入名字">
+					<button type="button" class="btn btn-default" onclick="queryOnClick()">提交</button>
+				</div>
+			</div>
+		</form>
+	
+		<table id="test-table" class="col-xs-12" data-toolbar="#toolbar"></table>
+		
+		<script>
+		
+			function queryOnClick() {
+				this.initTable();
+			}
+
+			function initTable() {
+				alert(133);
+				$('#test-table').bootstrapTable('destroy'); 
+				$('#test-table').bootstrapTable({
+					method : 'get',
+					toolbar : '#toolbar', //工具按钮用哪个容器
+					striped : true, //是否显示行间隔色
+					cache : false, //是否使用缓存，默认为true，所以一般情况下需要设置一下这个属性（*）
+					pagination : true, //是否显示分页（*）
+					sortable : false, //是否启用排序
+					sortOrder : "asc", //排序方式
+					pageNumber : 1, //初始化加载第一页，默认第一页
+					pageSize : 1, //每页的记录行数（*）
+					pageList : [ 10, 25, 50, 100 ], //可供选择的每页的行数（*）
+					url : "content/getContentPage.action",//这个接口需要处理bootstrap table传递的固定参数
+					queryParamsType : '', //默认值为 'limit' ,在默认情况下 传给服务端的参数为：offset,limit,sort
+					// 设置为 ''  在这种情况下传给服务器的参数为：pageSize,pageNumber
+					queryParams : queryParams,//前端调用服务时，会默认传递上边提到的参数，如果需要添加自定义参数，可以自定义一个函数返回请求参数
+					sidePagination : "server", //分页方式：client客户端分页，server服务端分页（*）
+					//search: true,      //是否显示表格搜索，此搜索是客户端搜索，不会进服务端，所以，个人感觉意义不大
+					strictSearch : true,
+					//showColumns: true,     //是否显示所有的列
+					//showRefresh: true,     //是否显示刷新按钮
+					minimumCountColumns : 2, //最少允许的列数
+					clickToSelect : true, //是否启用点击选中行
+					searchOnEnterKey : true,
+					columns : [ {
+						field : 'contentId',
+						title : 'id',
+						align : 'center'
+					}, {
+						field : 'content',
+						title : '知识内容',
+						align : 'center'
+					}, {
+						field : 'saveDate',
+						title : '存储时间',
+						align : 'center'
+					}, {
+						field : 'contentId',
+						title : '操作',
+						align : 'center',
+						formatter : function(value, row, index) {
+							//通过formatter可以自定义列显示的内容
+							//value：当前field的值，即id
+							//row：当前行的数据
+							var a = '<a href="" >测试</a>';
+						}
+					} ],
+					pagination : true
+				});
+				alert(233);
+			}
+			function queryParams(params) { //配置参数 
+				var queryContent;
+				var temp = { //这里的键的名字和控制器的变量名必须一直，这边改动，控制器也需要改成一样的 
+					pageSize : params.pageSize, //页面大小 
+					pageNumber : params.pageNumber, //页码 
+					queryContent : $("#firstname").val(),
+					sortOrder : params.order
+				//排位命令（desc，asc） 
+				};
+				return temp;
+			}
+		</script>	
+	</body>
+</html>

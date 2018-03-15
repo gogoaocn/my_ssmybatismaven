@@ -1,0 +1,22 @@
+package cn.ms.dao;
+
+import java.util.List;
+
+import org.apache.ibatis.annotations.Param;
+
+import cn.ms.params.Goods;
+
+public interface GoodsDao {
+
+	/*
+	 * 获取货物信息分页内容
+	 */
+	List<Goods> getGoodsPage(@Param("queryContent") String queryContent, @Param("stratRow")int stratRow, 
+			@Param("endRow")int endRow); 
+	
+	/*
+	 * 查询总条数
+	 */
+	
+	int reCount(@Param("queryContent") String queryContent);
+}

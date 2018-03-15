@@ -1,0 +1,42 @@
+package cn.ms.services.impl;
+
+import java.util.List;
+
+import javax.annotation.Resource;
+
+import org.springframework.stereotype.Service;
+
+import cn.ms.dao.ContentDao;
+import cn.ms.params.Content;
+import cn.ms.service.ContentService;
+import cn.ms.util.mvc.Page;
+
+@Service("contentService")
+public class ContentServiceImpl implements ContentService{
+
+	@Resource
+	private ContentDao contentDao;
+	
+	
+	/**
+	 * 获取知识内容分页
+	 * @return
+	 */
+	public Page<Content> getContentPage(String queryContent, int pageSize, int pageNumber) {
+		
+		//获取知识内容总数量（条数）
+		int count = this.contentDao.reCount(queryContent);
+		//计算此时查询的范围limit #{stratRow},#{endRow},根据pageSize pageNumber
+		int stratRow = pageNumber-1;
+		int endRow = pageSize;
+		
+		List<Content> list = this.contentDao.getContentPage(queryContent, stratRow, endRow);
+		Page<Content> page = new Page<Content>();
+		page.setPage(pageNumber);
+		page.setRows(list);
+		page.setTotalCount(list.size());
+		page.setTotal(count);
+		return page;
+	}
+
+}

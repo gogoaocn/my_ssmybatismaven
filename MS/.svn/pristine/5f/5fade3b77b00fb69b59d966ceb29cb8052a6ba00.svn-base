@@ -1,0 +1,42 @@
+package cn.ms.params;
+
+import java.sql.Date;
+
+/**
+ * 内容信息实体类
+ * @author yzw09
+ *
+ */
+public class Content {
+
+	private Integer contentId;
+	
+	private String content;
+	
+	private Date saveDate;
+
+	public Integer getContentId() {
+		return contentId;
+	}
+
+	public void setContentId(Integer contentId) {
+		this.contentId = contentId;
+	}
+
+	public String getContent() {
+		return content;
+	}
+
+	public void setContent(String content) {
+		this.content = content;
+	}
+
+	public Date getSaveDate() {
+		return saveDate;
+	}
+
+	public void setSaveDate(Date saveDate) {
+		this.saveDate = saveDate;
+	}
+	
+}

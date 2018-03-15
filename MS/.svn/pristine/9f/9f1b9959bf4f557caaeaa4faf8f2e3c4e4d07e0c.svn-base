@@ -1,0 +1,155 @@
+package cn.ms.controller;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.alibaba.fastjson.JSON;
+
+import cn.ms.params.User;
+import cn.ms.service.UserService;
+
+
+@Controller
+@RequestMapping("/user")
+public class UserController {
+	@Resource
+	private UserService userService;
+
+	
+	@RequestMapping("/test1")
+	@ResponseBody
+	public String test1(HttpServletResponse response) {
+		System.out.println("前端请求成功！！！");
+		return "1";
+	}
+	
+	@RequestMapping("/userList")
+	public String userList(HttpServletRequest request, Model model) {
+		List<User> uList = userService.getAllUser();
+		model.addAttribute("uList", uList);
+		return "userList";
+	}
+
+	@RequestMapping("/showUser")
+	public String showUser(HttpServletRequest request, Model model) {
+		int userId = Integer.parseInt(request.getParameter("id"));
+		User user = userService.getUserById(userId);
+		model.addAttribute("user", user);
+		return "showUser";
+	}
+
+	@RequestMapping("/addUserUI")
+	public String addUserUI(String ids, Model model) {
+		model.addAttribute("uList", userService.getUserByBatch(ids));
+		return "userList";
+	}
+
+	@RequestMapping("/addUser")
+	public String addUser(HttpServletRequest request, Model model) {
+		User user = new User();
+		user.setName(String.valueOf(request.getParameter("name")));
+		user.setPassword(String.valueOf(request.getParameter("password")));
+		user.setAge(Integer.parseInt(String.valueOf(request.getParameter("age"))));
+		userService.insertUser(user);
+		return "redirect:/jsp/userList";//跳到userList方法执行后再跳转
+	}
+
+	/**
+	 * 使用@RequestBody接受前台传递的一组json数据
+	 * 
+	 * @param users
+	 * @return
+	 */
+	@RequestMapping("/saveJsonUser")
+	public String saveJsonUser(@RequestBody User[] users) {
+		System.out.println("ddd");
+		for (User user2 : users) {
+			System.out.println(user2);
+		}
+		System.out.println(users);
+		return "saveUser";
+	}
+
+	@RequestMapping("/userRole")
+	@ResponseBody
+	public List<User> selectRoles(String username) {
+		User user1 = new User();
+		User user2 = new User();
+		user1.setId(1);
+		user1.setName("admin");
+		user1.setPassword("admin");
+		user1.setAge(22);
+		user2.setId(2);
+		user2.setName("b");
+		user2.setPassword("b");
+		user2.setAge(28);
+		List<User> userList = new ArrayList<User>();
+		userList.add(user1);
+		userList.add(user2);
+		return userList;
+
+	}
+
+	/**
+	 * ajax请求不需要返回页面，只需要得到response中的数据即可，所以方法签名为void即可
+	 * 通过PrintWriter将响应数据写入response，ajax可以接受到这个数据
+	 * @param request
+	 * @param response
+	 */
+	@RequestMapping(value = "ajax", method = RequestMethod.POST)
+	public void ajaxDatas(HttpServletRequest request,
+			HttpServletResponse response) {
+		List<User> userList = new ArrayList<User>();
+		userList = userService.getAllUser();
+		String jsonResult = JSON.toJSONString(userList);
+		PrintWriter printWriter = null;
+		try {
+			printWriter = response.getWriter();
+			printWriter.print(jsonResult);
+		} catch (IOException ex) {
+//			Logger.getLogger(UserController.class.getName()).log(Level.SEVERE,
+//					null, ex);
+		} finally {
+			if (null != printWriter) {
+				printWriter.flush();
+				printWriter.close();
+			}
+		}
+	}
+
+	// 传递数组 String[] id 可以改成List<String> id
+	@RequestMapping("/add")
+	public void add(
+			@RequestParam(value = "id[]", required = false, defaultValue = "") String[] id,
+			HttpServletResponse response) {
+		userService.deleteUserByBatch(id);
+		System.out.println(id);
+
+	}
+
+	// 传递对象数组
+	@RequestMapping("/saveUser")
+	@ResponseBody
+	public List<String> saveUser(@RequestBody List<User> users) {
+		userService.insertUserByBatch(users);
+		List<String> str = new ArrayList<String>();
+		str.add("a");
+		str.add("b");
+		return str;
+	}
+
+}

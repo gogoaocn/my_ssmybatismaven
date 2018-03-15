@@ -1,0 +1,13 @@
+package cn.ms.service;
+
+import cn.ms.params.Content;
+import cn.ms.util.mvc.Page;
+
+public interface ContentService {
+
+	/**
+	 * 获取知识内容分页
+	 * @return
+	 */
+	Page<Content> getContentPage(String queryContent, int pageSize, int pageNumber);
+}
